@@ -1,34 +1,27 @@
 class Solution {
     public int maxSubarraySumCircular(int[] nums) {
         int n = nums.length;
-        int curMax = nums[0];
-        int normalMax = nums[0];
-        for(int i = 1; i < n; i++){
-            curMax = Math.max(nums[i], curMax + nums[i]);
-            normalMax = Math.max(normalMax, curMax);
-        }
+        int totalSum = 0;
+        int curMin = 0;
+        int curMax = 0;
+        int maxSum = nums[0];
+        int minSum = nums[0];
 
-        int[] maxSuffix = new int[n];
-        maxSuffix[n - 1] = nums[n - 1];
-        int suffixSum = nums[n - 1];
-        for(int i = n - 2; i >= 0; i--){
-            suffixSum += nums[i];
-            maxSuffix[i] = Math.max(maxSuffix[i + 1], suffixSum);
-        }
+        for(int i = 0; i < n; i++){
+            curMax = Math.max(curMax + nums[i], nums[i]);
+            maxSum = Math.max(maxSum, curMax);
 
-        int[] maxPrefix = new int[n];
-        maxPrefix[0] = nums[0];
-        int prefixSum = nums[0];
-        for(int i = 1; i < n; i++){
-            prefixSum += nums[i];
-            maxPrefix[i] = Math.max(maxPrefix[i - 1], prefixSum);
-        }
+            curMin = Math.min(curMin + nums[i], nums[i]);
+            minSum = Math.min(minSum, curMin);
 
-        int maxCircular = Integer.MIN_VALUE;
-        for(int i = 0; i < n - 1; i++){
-            int sum = maxPrefix[i] + maxSuffix[i + 1];
-            maxCircular = Math.max(maxCircular, sum);
+            totalSum += nums[i];
         }
-        return Math.max(maxCircular, normalMax);
+        int normalSum = maxSum;
+        int circularSum = totalSum - minSum;
+
+        if(totalSum == minSum){
+            return normalSum;
+        }
+        return Math.max(normalSum, circularSum);
     }
 }
