@@ -15,22 +15,17 @@ class Solution {
         }
 
         boolean[] visited = new boolean[n];
-        Queue<Integer> q = new ArrayDeque<>();
-
-        q.offer(source);
-        visited[source] = true;
-
-        while(!q.isEmpty()){
-            int curNode = q.poll();
-            
-            if(curNode == destination){
-                return true;
-            }
-
-            for(Integer neighbour : adj.get(curNode)){
-                if(!visited[neighbour]){
-                    q.offer(neighbour);
-                    visited[neighbour] = true;
+        return dfs(source, adj, visited, destination);
+    }
+    boolean dfs(int node, ArrayList<ArrayList<Integer>> adj, boolean[] visited, int destination){
+        visited[node] = true;
+        if(node == destination){
+            return true;
+        }
+        for(Integer nbr : adj.get(node)){
+            if(!visited[nbr]){
+                if(dfs(nbr, adj, visited, destination)){
+                    return true;
                 }
             }
         }
