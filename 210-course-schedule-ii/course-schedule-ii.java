@@ -1,46 +1,39 @@
 class Solution {
     public int[] findOrder(int n, int[][] p) {
-        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        int[] ans = new int[n];
+        List<List<Integer>> adj = new ArrayList<>();
+        int[] indegree = new int[n];
         for(int i = 0; i < n; i++){
             adj.add(new ArrayList<>());
         }
-        for(int i = 0; i < p.length; i++){
-            int u = p[i][1];
-            int v = p[i][0];
-            
-            adj.get(u).add(v);
+        for(int[] edge : p){
+            int u = edge[0];
+            int v = edge[1];
+
+            adj.get(v).add(u);
+            indegree[u]++;
         }
-        int[] state = new int[n];
-        Stack<Integer> st = new Stack<>();
+        Queue<Integer> q = new ArrayDeque<>();
         for(int i = 0; i < n; i++){
-            if(state[i] == 0){
-                if(dfs(i, adj, state, st) == true){
-                    return new int[0];
-                }
-            }    
+            if(indegree[i] == 0){
+                q.offer(i);
+            }
         }
-        int[] ans = new int[n];
         int idx = 0;
-        while(!st.isEmpty()){
-            ans[idx] = st.pop();
-            idx++;
+        while(!q.isEmpty()){
+            int node = q.poll();
+            ans[idx++] = node;
+
+            for(Integer nbr : adj.get(node)){
+                indegree[nbr]--;
+                if(indegree[nbr] == 0){
+                    q.offer(nbr);
+                }
+            }
+        }
+        if(idx != n){
+            return new int[0];
         }
         return ans;
-    }
-    boolean dfs(int node, ArrayList<ArrayList<Integer>> adj, int[] state, Stack<Integer> st){
-        state[node] = 1;
-        for(Integer neighbour : adj.get(node)){
-            if(state[neighbour] == 0){
-                if(dfs(neighbour, adj, state, st) == true){
-                    return true;
-                }
-            }
-            else if(state[neighbour] == 1){
-                return true;
-            }
-        }
-        state[node] = 2;
-        st.push(node);
-        return false;
     }
 }
