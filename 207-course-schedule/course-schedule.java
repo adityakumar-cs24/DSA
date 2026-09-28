@@ -1,39 +1,38 @@
 class Solution {
     public boolean canFinish(int n, int[][] p) {
-        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        List<List<Integer>> adj = new ArrayList<>();
+        int[] indegree = new int[n];
         for(int i = 0; i < n; i++){
             adj.add(new ArrayList<>());
         }
-        for(int i = 0; i < p.length; i++){
-            int u = p[i][1];
-            int v = p[i][0];
-            
-            adj.get(u).add(v);
+        for(int[] edge : p){
+            int u = edge[0];
+            int v = edge[1];
+
+            adj.get(v).add(u);
+            indegree[u]++;
         }
-        int[] state = new int[n];
+        Queue<Integer> q = new ArrayDeque<>();
         for(int i = 0; i < n; i++){
-            if(state[i] == 0){
-                if(dfs(i, adj, state) == true){
-                    return false;
+            if(indegree[i] == 0){
+                q.offer(i);
+            }
+        }
+
+        while(!q.isEmpty()){
+            int node = q.poll();
+            for(Integer nbr : adj.get(node)){
+                indegree[nbr]--;
+                if(indegree[nbr] == 0){
+                    q.offer(nbr);
                 }
-            }    
+            }
+        }
+        for(int i = 0; i < n; i++){
+            if(indegree[i] != 0){
+                return false;
+            }
         }
         return true;
     }
-    boolean dfs(int node, ArrayList<ArrayList<Integer>> adj, int[] state){
-        state[node] = 1;
-        for(Integer neighbour : adj.get(node)){
-            if(state[neighbour] == 0){
-                if(dfs(neighbour, adj, state) == true){
-                    return true;
-                }
-            }
-            else if(state[neighbour] == 1){
-                return true;
-            }
-        }
-        state[node] = 2;
-        return false;
-    }
-    
 }
