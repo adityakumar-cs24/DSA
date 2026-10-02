@@ -10,23 +10,28 @@ class Solution {
             {0, -1},
             {0, 1}
         };
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[] {sr, sc});
+        visited[sr][sc] = true;
 
-        dfs(sr, sc, image, visited, color, original, directions);
-        return image;
-    }
-    void dfs(int r, int c, int[][] image, boolean[][] visited, int color, int original, int[][] directions){
-        visited[r][c] = true;
-        image[r][c] = color;
-
-        for(int[] dir : directions){
+        while(!q.isEmpty()){
+            int[] curr = q.poll();
+            int r = curr[0];
+            int c = curr[1];
+            image[r][c] = color;
+            for(int[] dir : directions){
             int nr = r + dir[0];
             int nc = c + dir[1];
 
-            if(nr >= 0 && nr < image.length &&
-                nc >= 0 && nc < image[0].length &&
-                !visited[nr][nc] && image[nr][nc] == original){
-                    dfs(nr, nc, image, visited, color, original, directions);
+                if(nr >= 0 && nr < image.length &&
+                    nc >= 0 && nc < image[0].length &&
+                    !visited[nr][nc] && image[nr][nc] == original){
+                    
+                        visited[nr][nc] = true;
+                        q.offer(new int[]{nr, nc});
                 }
+            }    
         }
+        return image;
     }
 }
