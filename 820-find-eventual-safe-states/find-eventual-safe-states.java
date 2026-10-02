@@ -1,36 +1,40 @@
 class Solution {
     public List<Integer> eventualSafeNodes(int[][] graph) {
         int V = graph.length;
-        boolean[] visited = new boolean[V];
-        int[] curPath = new int[V];
-        List<Integer> ans = new ArrayList<>();
+        List<List<Integer>> adj = new ArrayList<>();
         for(int i = 0; i < V; i++){
-            if(!visited[i]){
-                dfs(i, graph, visited, curPath);
+            adj.add(new ArrayList<>());
+        }
+        int[] indegree = new int[V];
+        for(int u = 0; u < V; u++) {
+
+            for(int v : graph[u]) {
+
+                adj.get(v).add(u);
+                indegree[u]++;
             }
         }
+        Queue<Integer> q = new ArrayDeque<>();
         for(int i = 0; i < V; i++){
-            if(curPath[i] == 0){
+            if(indegree[i] == 0){
+                q.offer(i);
+            }
+        }
+        while(!q.isEmpty()){
+            int node = q.poll();
+            for(Integer nbr : adj.get(node)){
+                indegree[nbr]--;
+                if(indegree[nbr] == 0){
+                    q.offer(nbr);
+                }
+            }
+        }
+        List<Integer> ans = new ArrayList<>();
+        for(int i = 0; i < V; i++){
+            if(indegree[i] == 0){
                 ans.add(i);
             }
         }
         return ans;
     }
-    boolean dfs(int node, int[][] graph, boolean[] visited, int[] curPath){
-        visited[node] = true;
-        curPath[node] = 1;
-        
-        for(int nbr : graph[node]){
-            if(!visited[nbr]){
-                if(dfs(nbr, graph, visited, curPath)){
-                    return true;
-                }
-            }
-            else if(curPath[nbr] == 1){
-                return true;
-            }
-        }
-        curPath[node] = 0;
-        return false;
-    } 
 }
