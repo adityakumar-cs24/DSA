@@ -15,25 +15,35 @@ class Solution {
             for(int j = 0; j < m; j++){
                 if(grid[i][j] == '1' && !visited[i][j]){
                     count++;
-                    dfs(i, j, grid, visited, directions);
+                    bfs(i, j, grid, visited, directions);
                 }
             }
         }
         return count;
     }
-    void dfs(int row, int col, char[][] grid, boolean[][] visited, int[][] directions){
+    void bfs(int row, int col, char[][] grid, boolean[][] visited, int[][] directions){
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[] {row, col});
         visited[row][col] = true;
-        for(int[] dir : directions){
-            int newRow = row + dir[0];
-            int newCol = col + dir[1];
 
-            if(newRow >= 0 && newRow < grid.length &&
-                newCol >= 0 && newCol < grid[0].length){
-                    if(grid[newRow][newCol] == '1' &&
-                        !visited[newRow][newCol]){
-                            dfs(newRow, newCol, grid, visited, directions);
+        while(!q.isEmpty()){
+            int[] curr = q.poll();
+            int r = curr[0];
+            int c = curr[1];
+
+            for(int[] dir : directions){
+            int nr = r + dir[0];
+            int nc = c + dir[1];
+
+                if(nr >= 0 && nr < grid.length &&
+                    nc >= 0 && nc < grid[0].length){
+                        if(grid[nr][nc] == '1' &&
+                            !visited[nr][nc]){
+                                visited[nr][nc] = true;
+                                q.offer(new int[]{nr, nc});
                         }
                 }
+            }
         }
     }
 }
